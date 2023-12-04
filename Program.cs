@@ -1,10 +1,4 @@
-﻿namespace advent_of_code_2023
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            
-        }
-    }
-}
+﻿using advent_of_code_2023.Day1;
+
+Day1.SolvePart1();
+Day1.SolvePart2();
