@@ -47,7 +47,7 @@
                 }
             }
 
-            Console.WriteLine($"Result of Day 1 - Part 1 is {output}");
+            Console.WriteLine($"Result of Day 2 - Part 1 is {output}");
 
         }
 
@@ -96,7 +96,7 @@
                 output += redMinimum * greenMinimum * blueMinimum;
             }
 
-            Console.WriteLine($"Result of Day 1 - Part 1 is {output}");
+            Console.WriteLine($"Result of Day 2 - Part 2 is {output}");
             Console.WriteLine("---");
         }
     }
