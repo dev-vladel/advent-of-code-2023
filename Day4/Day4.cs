@@ -36,7 +36,7 @@
         public static void SolvePart2()
         {
             var output = 0;
-            var input = File.ReadAllLines("../../../Day4/testInput.txt");
+            var input = File.ReadAllLines("../../../Day4/input.txt");
 
             //solution
             List<Card> cards = new List<Card>();
