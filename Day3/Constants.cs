@@ -3,5 +3,7 @@
     public static class Constants
     {
         public static readonly string Symbols = "\\/$&+,:;=?@#|'<>^*()%!-";
+
+        public static readonly string Numbers = "0123456789";
     }
 }

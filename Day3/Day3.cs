@@ -35,7 +35,6 @@
                     }
                     else if ((character == '.' || Constants.Symbols.Contains(character)) && !string.IsNullOrEmpty(number))
                     {
-
                         if (IsSymbolNearby(newInput[indexLine - 1], newInput[indexLine], newInput[indexLine + 1], startOfNumberIndex, endofNumberIndex))
                         {
                             output += int.Parse(number);
@@ -52,22 +51,94 @@
                 indexLine++;
             }
 
-            Console.WriteLine($"Result of Day 1 - Part 1 is {output}");
+            Console.WriteLine($"Result of Day 3 - Part 1 is {output}");
         }
 
         public static void SolvePart2()
         {
             var output = 0;
             var input = File.ReadAllLines("../../../Day3/input.txt");
+            var newInput = RebuildInput(input);
+            var newInputLength = newInput.Length;
 
-            // solution
+            var indexLine = 1;
+            var numbers = new List<Number>();
 
-            Console.WriteLine($"Result of Day 1 - Part 1 is {output}");
+            // Traverse every line for finding numbers
+            while (indexLine < newInputLength)
+            {
+                var number = string.Empty;
+                var startOfNumberIndex = -1;
+                var middleOfNumberIndex = -1;
+                var endOfNumberIndex = -1;
+
+                var lineCharArray = newInput[indexLine].ToCharArray();
+                var indexColumn = 1;
+
+                // Traverse every column in a line
+                while (indexColumn < lineCharArray.Length)
+                {
+                    var character = lineCharArray[indexColumn];
+
+                    if (char.IsNumber(character))
+                    {
+                        startOfNumberIndex = string.IsNullOrEmpty(number) ? indexColumn : startOfNumberIndex;
+                        endOfNumberIndex = indexColumn;
+                        middleOfNumberIndex = (int)Math.Ceiling((endOfNumberIndex + startOfNumberIndex) / 2f);
+
+                        number = $"{number}{character}";
+                    }
+                    else if ((character == '.' || Constants.Symbols.Contains(character)) && !string.IsNullOrEmpty(number))
+                    {
+                        numbers.Add(new Number()
+                        {
+                            Value = int.Parse(number),
+                            Line = newInput[indexLine],
+                            FirstIndex = startOfNumberIndex,
+                            MiddleIndex = middleOfNumberIndex,
+                            LastIndex = endOfNumberIndex
+                        });
+
+                        number = string.Empty;
+                        startOfNumberIndex = -1;
+                        middleOfNumberIndex = -1;
+                        endOfNumberIndex = -1;
+                    }
+
+                    indexColumn++;
+                }
+
+                indexLine++;
+            }
+
+            indexLine = 1;
+
+            while (indexLine < newInputLength)
+            {
+                var lineCharArray = newInput[indexLine].ToCharArray();
+                var indexColumn = 1;
+
+                while (indexColumn < lineCharArray.Length)
+                {
+                    var character = lineCharArray[indexColumn];
+
+                    if (character == '*')
+                    {
+                        output += GearRatio(numbers, newInput[indexLine - 1], newInput[indexLine], newInput[indexLine + 1], indexColumn);
+                    }
+
+                    indexColumn++;
+                }
+
+                indexLine++;
+            }
+
+            Console.WriteLine($"Result of Day 3 - Part 2 is {output}");
             Console.WriteLine("---");
         }
 
         /// <summary>
-        /// Reads the original input and adds to it neutral values . (dot) for skipping later validations if the 
+        /// Reads the original input and adds to it neutral values . (dot) for skipping later validations if the
         /// index is out of bounds or not.
         /// </summary>
         /// <param name="originalInput"></param>
@@ -104,7 +175,6 @@
                         lineIndex++;
                     }
                 }
-
             }
 
             return newInput;
@@ -141,6 +211,54 @@
             }
 
             return symbolFound;
+        }
+
+        /// <summary>
+        /// Checks through the provided lines if they contain or not at most two numbers around the asterisk's position.
+        /// If yes, returns the gear ratio (by default it's 0).
+        /// </summary>
+        /// <param name="previousLineNumbers"></param>
+        /// <param name="currentLineNumbers"></param>
+        /// <param name="nextLineNumbers"></param>
+        /// <param name="indexOfAsterisk"></param>
+        /// <returns>Integer value returning the gear ratio if conditions are matched.</returns>
+        private static int GearRatio(List<Number> numbers, string previousLine, string currentLine, string nextLine, int indexOfAsterisk)
+        {
+            var gearRatio = 0;
+
+            var previousLineNumbers = numbers
+                .Where(n => n.Line == previousLine
+                    && (n.FirstIndex == indexOfAsterisk - 1 || n.FirstIndex == indexOfAsterisk || n.FirstIndex == indexOfAsterisk + 1
+                        || n.MiddleIndex == indexOfAsterisk - 1 || n.MiddleIndex == indexOfAsterisk || n.MiddleIndex == indexOfAsterisk + 1
+                        || n.LastIndex == indexOfAsterisk - 1 || n.LastIndex == indexOfAsterisk || n.LastIndex == indexOfAsterisk + 1)).ToList();
+
+            var currentLineNumbers = numbers
+                .Where(n => n.Line == currentLine
+                    && (n.LastIndex == indexOfAsterisk - 1 || n.FirstIndex == indexOfAsterisk + 1)).ToList();
+
+            var nextLineNumbers = numbers
+                .Where(n => n.Line == nextLine
+                    && (n.FirstIndex == indexOfAsterisk - 1 || n.FirstIndex == indexOfAsterisk || n.FirstIndex == indexOfAsterisk + 1
+                        || n.MiddleIndex == indexOfAsterisk - 1 || n.MiddleIndex == indexOfAsterisk || n.MiddleIndex == indexOfAsterisk + 1
+                        || n.LastIndex == indexOfAsterisk - 1 || n.LastIndex == indexOfAsterisk || n.LastIndex == indexOfAsterisk + 1)).ToList();
+
+            if (previousLineNumbers.Count + currentLineNumbers.Count + nextLineNumbers.Count == 2)
+            {
+                var gearNumbers = previousLineNumbers.Union(currentLineNumbers).Union(nextLineNumbers);
+                gearRatio = gearNumbers.Aggregate(1, (acc, item) => acc * item.Value);
+            }
+
+            return gearRatio;
+        }
+
+        private class Number
+        {
+            public int Value { get; set; }
+            public string Line { get; set; } = string.Empty;
+            public int LineIndex { get; set; }
+            public int FirstIndex { get; set; }
+            public int MiddleIndex { get; set; }
+            public int LastIndex { get; set; }
         }
     }
 }
