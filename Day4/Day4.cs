@@ -47,7 +47,7 @@
 
                 var split = line.Split('|');
 
-                card.Id = int.Parse(split[0].Split(':')[0].Split(' ')[1]);
+                card.Id = int.Parse(split[0].Split(':')[0].Split(' ').Where(s => !string.IsNullOrEmpty(s)).ToArray()[1]);
                 card.WinningNumbers = split[0].Split(':')[1].Split(' ').Where(s => !string.IsNullOrEmpty(s)).Select(int.Parse).ToList();
                 card.AvailableNumbers = split[1].Split(' ').Where(s => !string.IsNullOrEmpty(s)).Select(int.Parse).ToList();
 
@@ -56,18 +56,18 @@
 
             var numberOfCards = new int[cards.Count];
 
-            for (var i = 0; i < cards.Count; i++)
+            for (var trackCard = 0; trackCard < cards.Count; trackCard++)
             {
-                var card = cards[i];
-                numberOfCards[i] += 1;
+                var card = cards[trackCard];
+                numberOfCards[trackCard] += 1;
 
                 var matchingNumbers = card.WinningNumbers.Intersect(card.AvailableNumbers).Count();
 
                 if (matchingNumbers > 0)
                 {
-                    for (int j = 0, idToIncrease = i + 1; j < matchingNumbers && idToIncrease <= cards.Count; j++)
+                    for (int trackNumber = 0, idToIncrease = trackCard + 1; trackNumber < matchingNumbers && idToIncrease <= cards.Count; trackNumber++)
                     {
-                        numberOfCards[idToIncrease++] += numberOfCards[i];
+                        numberOfCards[idToIncrease++] += numberOfCards[trackCard];
                     }
                 }
             }
