@@ -6,7 +6,8 @@ namespace advent_of_code_2023.Day6
     {
         public static void SolvePart1()
         {
-            var output = 1;
+            var outputQuadratic = 1;
+            var outputBruteForce = 1;
             var input = File.ReadAllLines("../../../Day6/input.txt");
 
             //solution
@@ -20,6 +21,13 @@ namespace advent_of_code_2023.Day6
 
             foreach (var pair in pairs)
             {
+                // Quadratic (fails for example input)
+                var discriminant = Math.Sqrt(pair.First * pair.First - 4 * pair.Second);
+                var numberOfWays = Math.Floor((pair.First + discriminant) / 2) - Math.Ceiling((pair.First - discriminant) / 2) + 1;
+
+                outputQuadratic *= (int)numberOfWays;
+
+                // Brute Force (works flawlessly)
                 var recordBeaten = 0;
 
                 for (int i = 0; i <= pair.First; i++)
@@ -32,10 +40,11 @@ namespace advent_of_code_2023.Day6
                     }
                 }
 
-                output *= recordBeaten;
+                outputBruteForce *= recordBeaten;
             }
 
-            Console.WriteLine($"Result of Day 6 - Part 1 is {output}");
+            Console.WriteLine($"Result of Day 6 - Part 1 (quadratic) is {outputQuadratic}");
+            Console.WriteLine($"Result of Day 6 - Part 1 (brute force) is {outputBruteForce}");
         }
 
         public static void SolvePart2()
