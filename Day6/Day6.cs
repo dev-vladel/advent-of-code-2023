@@ -20,10 +20,19 @@ namespace advent_of_code_2023.Day6
 
             foreach (var pair in pairs)
             {
-                var discriminant = Math.Sqrt(pair.First * pair.First - 4 * pair.Second);
-                var numberOfWays = Math.Floor((pair.First + discriminant) / 2) - Math.Ceiling((pair.First - discriminant) / 2) + 1;
+                var recordBeaten = 0;
 
-                output *= (int) numberOfWays;
+                for (int i = 0; i <= pair.First; i++)
+                {
+                    var distanceTraveled = i * pair.First - i * i;
+
+                    if (distanceTraveled > pair.Second)
+                    {
+                        recordBeaten++;
+                    }
+                }
+
+                output *= recordBeaten;
             }
 
             Console.WriteLine($"Result of Day 6 - Part 1 is {output}");
