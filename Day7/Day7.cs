@@ -124,53 +124,90 @@
                     // High Card
                     case 1:
                         // If Joker present, best case is to have a One Pair
-                        if (hand.LabelTypes.Contains('J')) {
-                            hand.TypeOfPair = 1;
-                        }
+                        hand.TypeOfPair = hand.LabelTypes.Contains('J') ? 1 : 0;
 
-                        hand.TypeOfPair = 0;
                         break;
 
-                    // One pair or Two Pair or Full House
+                    // One Pair or Two Pair
                     case 2:
-                        hand.Strength.Remove(hand.Strength.FirstOrDefault(h => h.Value == maxStrength).Key);
-                        hand.TypeOfPair = hand.Strength.Values.Max() == 1 ? 1 : 2;
-
+                        // If Joker present, new cases can be Three of a Kind or Full House
                         if (hand.LabelTypes.Contains('J'))
                         {
-                            if (hand.Label.Count(c => c == 'J') == 2)
-                            {
-                                if (hand.TypeOfPair == 2)
-                                {
-                                    hand.TypeOfPair = 4;
-                                }
+                            var strength = hand.Strength.FirstOrDefault(h => h.Value == maxStrength);
 
-                                hand.TypeOfPair = 4;
-                            } 
-                            else if (hand.Label.Count(c => c == 'J') == 1)
+                            if (strength.Key == "J") 
                             {
-                                if (hand.TypeOfPair == 2)
+                                hand.Strength.Remove(hand.Strength.FirstOrDefault(h => h.Value == maxStrength).Key);
+
+                                if (hand.Strength.Values.Max() == 1)
                                 {
                                     hand.TypeOfPair = 3;
-                                } 
+                                }
+                                else if (hand.Strength.Values.Max() == 2)
+                                {
+                                    hand.TypeOfPair = 5;
+                                }
                             }
                             else
                             {
-                                hand.TypeOfPair = hand.TypeOfPair == 1 ? 2 : 3;
-                            }
+                                hand.Strength.Remove(hand.Strength.FirstOrDefault(h => h.Value == maxStrength).Key);
 
+                                if (hand.Strength.Values.Max() == 2)
+                                {
+                                    hand.TypeOfPair = 4;
+                                }
+                                else
+                                {
+                                    hand.TypeOfPair = 3;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            hand.Strength.Remove(hand.Strength.FirstOrDefault(h => h.Value == maxStrength).Key);
+                            hand.TypeOfPair = hand.Strength.Values.Max() == 2 ? 2 : 1;
                         }
 
                         break;
 
                     // Three of a Kind or Full House
                     case 3:
-                        hand.Strength.Remove(hand.Strength.FirstOrDefault(h => h.Value == maxStrength).Key);
-                        hand.TypeOfPair = hand.Strength.Values.Max() == 2 ? 4 : 3;
-
+                        // If Joker present, new cases can be Full House
                         if (hand.LabelTypes.Contains('J'))
                         {
-                            hand.TypeOfPair = hand.TypeOfPair == 3 ? 4 : hand.TypeOfPair;
+                            var strength = hand.Strength.FirstOrDefault(h => h.Value == maxStrength);
+
+                            if (strength.Key == "J")
+                            {
+                                hand.Strength.Remove(hand.Strength.FirstOrDefault(h => h.Value == maxStrength).Key);
+
+                                if (hand.Strength.Values.Max() == 2)
+                                {
+                                    hand.TypeOfPair = 6;
+                                }
+                                else if (hand.Strength.Values.Max() == 1)
+                                {
+                                    hand.TypeOfPair = 5;
+                                }
+                            }
+                            else
+                            {
+                                hand.Strength.Remove(hand.Strength.FirstOrDefault(h => h.Value == maxStrength).Key);
+
+                                if (hand.Strength.Values.Max() == 2)
+                                {
+                                    hand.TypeOfPair = 6;
+                                }
+                                else if (hand.Strength.Values.Max() == 1)
+                                {
+                                    hand.TypeOfPair = 5;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            hand.Strength.Remove(hand.Strength.FirstOrDefault(h => h.Value == maxStrength).Key);
+                            hand.TypeOfPair = hand.Strength.Values.Max() == 2 ? 4 : 3;
                         }
 
                         break;
@@ -178,12 +215,8 @@
                     // Four of a Kind
                     case 4:
                         // If Joker present, best case is to have a Five of a Kind
-                        if (hand.LabelTypes.Contains('J'))
-                        {
-                            hand.TypeOfPair = 6;
-                        }
+                        hand.TypeOfPair = hand.LabelTypes.Contains('J') ? 6 : 5;
 
-                        hand.TypeOfPair = 5;
                         break;
 
                     // Five of a Kind
