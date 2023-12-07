@@ -94,10 +94,131 @@
 
         public static void SolvePart2()
         {
-            int output = 0;
+            double output = 0;
             var input = File.ReadAllLines("../../../Day7/input.txt");
 
+            var hands = new List<Hand>();
+
             //solution
+            foreach (var line in input)
+            {
+                var split = line.Split(' ');
+
+                var hand = new Hand()
+                {
+                    Label = split[0],
+                    LabelTypes = split[0].Distinct().ToList(),
+                    Bid = int.Parse(split[1])
+                };
+
+                foreach (var character in hand.LabelTypes)
+                {
+                    var count = hand.Label.Count(l => l == character);
+                    hand.Strength[character.ToString()] = count;
+                }
+
+                var maxStrength = hand.Strength.Values.Max();
+
+                switch (maxStrength)
+                {
+                    // High Card
+                    case 1:
+                        // If Joker present, best case is to have a One Pair
+                        if (hand.LabelTypes.Contains('J')) {
+                            hand.TypeOfPair = 1;
+                        }
+
+                        hand.TypeOfPair = 0;
+                        break;
+
+                    // One pair or Two Pair or Full House
+                    case 2:
+                        hand.Strength.Remove(hand.Strength.FirstOrDefault(h => h.Value == maxStrength).Key);
+                        hand.TypeOfPair = hand.Strength.Values.Max() == 1 ? 1 : 2;
+
+                        if (hand.LabelTypes.Contains('J'))
+                        {
+                            if (hand.Label.Count(c => c == 'J') == 2)
+                            {
+                                if (hand.TypeOfPair == 2)
+                                {
+                                    hand.TypeOfPair = 4;
+                                }
+
+                                hand.TypeOfPair = 4;
+                            } 
+                            else if (hand.Label.Count(c => c == 'J') == 1)
+                            {
+                                if (hand.TypeOfPair == 2)
+                                {
+                                    hand.TypeOfPair = 3;
+                                } 
+                            }
+                            else
+                            {
+                                hand.TypeOfPair = hand.TypeOfPair == 1 ? 2 : 3;
+                            }
+
+                        }
+
+                        break;
+
+                    // Three of a Kind or Full House
+                    case 3:
+                        hand.Strength.Remove(hand.Strength.FirstOrDefault(h => h.Value == maxStrength).Key);
+                        hand.TypeOfPair = hand.Strength.Values.Max() == 2 ? 4 : 3;
+
+                        if (hand.LabelTypes.Contains('J'))
+                        {
+                            hand.TypeOfPair = hand.TypeOfPair == 3 ? 4 : hand.TypeOfPair;
+                        }
+
+                        break;
+
+                    // Four of a Kind
+                    case 4:
+                        // If Joker present, best case is to have a Five of a Kind
+                        if (hand.LabelTypes.Contains('J'))
+                        {
+                            hand.TypeOfPair = 6;
+                        }
+
+                        hand.TypeOfPair = 5;
+                        break;
+
+                    // Five of a Kind
+                    case 5:
+                        hand.TypeOfPair = 6;
+                        break;
+                }
+
+                hands.Add(hand);
+            }
+
+            var orderedHand = new List<Hand>();
+
+            for (int i = 0; i <= 6; i++)
+            {
+                var pairList = hands.Where(h => h.TypeOfPair == i).ToList();
+
+                for (int j = 0; j < pairList.Count - 1; j++)
+                {
+                    for (int h = j + 1; h < pairList.Count; h++)
+                    {
+                        if (VerifyStrengthTwo(pairList[j], pairList[h]))
+                        {
+                            (pairList[h], pairList[j]) = (pairList[j], pairList[h]);
+                        }
+                    }
+                }
+
+                orderedHand.AddRange(pairList);
+            }
+
+            foreach (var hand in orderedHand)
+            {
+                output += hand.Bid * (orderedHand.IndexOf(hand) + 1);
+            }
 
             Console.WriteLine($"Result of Day 7 - Part 2 is {output}");
         }
@@ -140,6 +261,27 @@
                 else
                 {
                     result = Constants.CardValues[one.Label[i].ToString()] > Constants.CardValues[two.Label[i].ToString()];
+
+                    break;
+                }
+            }
+
+            return result;
+        }
+
+        private static bool VerifyStrengthTwo(Hand one, Hand two)
+        {
+            var result = false;
+
+            for (int i = 0; i < one.Label.Length; i++)
+            {
+                if (one.Label[i] == two.Label[i])
+                {
+                    continue;
+                }
+                else
+                {
+                    result = Constants.CardValuesWithWeakerJ[one.Label[i].ToString()] > Constants.CardValuesWithWeakerJ[two.Label[i].ToString()];
 
                     break;
                 }
