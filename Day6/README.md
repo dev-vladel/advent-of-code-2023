@@ -43,6 +43,8 @@ To see how much margin of error you have, determine the number of ways you can b
 
 ###
 
+### --- Part Two ---
+
 As the race is about to start, you realize the piece of paper with race times and record distances you got earlier actually just has very bad kerning. There's really only one race - ignore the spaces between the numbers on each line.
 
 So, the example from before:
