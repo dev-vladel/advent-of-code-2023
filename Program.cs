@@ -29,3 +29,4 @@ using advent_of_code_2023.Day9;
 //Day8.SolvePart2();
 
 Day9.SolvePart1();
+Day9.SolvePart2();
