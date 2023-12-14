@@ -1,6 +1,6 @@
 ﻿namespace advent_of_code_2023.Day3
 {
-    public class Day3
+    public class Day03
     {
         public static void SolvePart1()
         {
