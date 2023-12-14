@@ -5,6 +5,7 @@ using advent_of_code_2023.Day4;
 using advent_of_code_2023.Day6;
 using advent_of_code_2023.Day7;
 using advent_of_code_2023.Day8;
+using advent_of_code_2023.Day9;
 
 //Day1.SolvePart1();
 //Day1.SolvePart2();
@@ -26,3 +27,5 @@ using advent_of_code_2023.Day8;
 
 //Day8.SolvePart1();
 //Day8.SolvePart2();
+
+Day9.SolvePart1();
