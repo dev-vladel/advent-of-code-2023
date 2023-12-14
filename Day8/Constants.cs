@@ -3,7 +3,9 @@
     public static class Constants
     {
         public readonly static string StartingPosition = "AAA";
+        public readonly static char StartingPositionShort = 'A';
         public readonly static string FinalPosition = "ZZZ";
+        public readonly static char FinalPositionShort = 'Z';
 
         public readonly static char InstructionLeft = 'L';
         public readonly static char InstructionRight = 'R';
